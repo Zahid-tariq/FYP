@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    
+
+    <title>Real Graphics</title>
+
+    <!-- Scripts -->
+    
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="icon" type="text/css" href="logo.png">
+
+    <!-- Styles -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    
+    
+ </head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="home.html" style="color:#636B6F;">REAL GRAPHICS
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto">
+
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">Logout</a>
+                            </li>
+                            
+                                
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="container my-5">
+        	<div class="card card-default my-5">
+            <div class="card-header"><b style="font-size: 20px;">Room</b></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="form my-3" action="/ro">
+                            
+                            <div class="form-group">
+                                <label>Enter Room Name:</label>
+                                <input class="form-control" type="text" name="room" required="required">
+                                <br/>
+                                <button type="submit" class="btn btn-secondary float-right">Join Room</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <form class="form my-3" action="" method="POST">
+                            
+                            <div class="form-group">
+                                <label>Enter Room Name:</label>
+                                <input class="form-control" type="text" name="room" required="required">
+                                <br/>
+                                <button type="submit" class="btn btn-secondary  float-right">Create Room</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        </div>
+
+</div>
+</body>
+</html>

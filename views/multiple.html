@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    
+
+    <title>Real Graphics</title>
+
+    <!-- Scripts -->
+    
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="icon" type="text/css" href="logo.png">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+<link rel="stylesheet" type="text/css" href="cam.css">
+<script type="text/javascript" src="js/cropper.js"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/2.2.4/cropper.min.js"></script>
+
+    <!-- Styles -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    
+    
+ </head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="home.html" style="color:#636B6F;">REAL GRAPHICS
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto">
+
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="login.html">LOGIN</a>
+                            </li>
+                            
+                                <li class="nav-item">
+                                    <a class="nav-link" href="register.html">REGISTER</a>
+                                </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+<div class="row my-5">
+	<div class="col-md-9">
+
+		<canvas id="canvas" width="400" height="400" style="border: 2px solid #4C4C4C;display: block;margin:0 auto;"></canvas>
+	</div>
+	<div class="col-md-3">
+		<div class="card card-default">
+			<div class="card-header"><b>Live Chat</b></div>
+			<div class="card-body">
+        <div class="col-sm-12 col-sm-offset-4 frame">
+            <ul></ul>
+            <div>
+                <div class="msj-rta macro" style="margin:auto">                        
+                    <div class="text text-r" style="background:whitesmoke !important">
+                        <input class="mytext" placeholder="Type a message"/>
+                    </div> 
+                </div>
+            </div>
+        </div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="editor-buttons" style="display: block;margin: 0 auto;text-align: center;">
+<input type="button" onclick="cropper.startCropping()" value="Start cropping" />
+    <input type="button" onclick="cropper.getCroppedImageSrc()" value="Crop" />
+    <input type="button" onclick="cropper.restore()" value="Restore" />
+    <button id="rotate">Rotate</button>
+    <button id="zoom-in">Zoom-In</button>
+    <button id="zoom-out">Zoom-Out</button>
+</div>
+<div class="filter-buttons" style="display: block;margin:0 auto;text-align: center;">
+  <div class="filter-group">
+    <span class="filter-name">Brightness</span>
+    <input id="brightness" type="range" min="-100" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Contrast</span>
+    <input id="contrast" type="range" min="-100" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Saturation</span>
+    <input id="saturation" type="range" min="-100" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Vibrance</span>
+    <input id="vibrance" type="range" min="-100" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Exposure</span>
+    <input id="exposure" type="range" min="0" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Noise</span>
+    <input id="noise" type="range" min="0" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Sharpen</span>
+    <input id="sharpen" type="range" min="0" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Sepia</span>
+    <input id="sepia" type="range" min="0" max="100" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Hue</span>
+    <input id="hue" type="range" min="0" max="100" value="0">
+  </div>
+  
+  <div class="filter-group">
+    
+    <span class="filter-name">Gamma</span>
+    <input id="gamma" type="range" min="0" max="10" value="0">
+  </div>
+  <div class="filter-group">
+    
+    <span class="filter-name">Clip</span>
+    <input id="clip" type="range" min="0" max="100" value="0">
+
+  <div class="filter-group">
+    
+    <span class="filter-name">stack Blur</span>
+    <input id="stackBlur" type="range" min="0" max="20" value="0">
+  </div>
+</div>
+</div>
+<div class="editor-buttons" style="display: block;margin: 0 auto;text-align: center;">
+  <input type="file" id="upload-file" placeholder="Upload a Picture" />
+  <label for="upload-file">Upload a Picture</label>
+  <button id="download-btn">Download Image</button>
+  <br/>
+  <button id="vintage-btn">Vintage</button>
+  <button id="lomo-btn">Lomo</button>
+  <button id="clarity-btn">Clarity</button>
+  <button id="sincity-btn">Sin City</button>
+  <button id="crossprocess-btn">Cross Process</button>
+  <button id="pinhole-btn">Pinhole</button>
+  <button id="nostalgia-btn">Nostalgia</button>
+  <button id="majestic-btn">Her Majesty</button>
+  <button id="crop-image">Crop</button>
+
+  <button id="sunrise-btn">Sunrise</button>
+  <button id="orange-peel-btn">Orange Peel</button>
+  <button id="love-btn">Love</button>
+  <button id="grunjy-btn">Grunjy</button>
+  <button id="jarques-btn">Jarques</button>
+  <button id="old-boot-btn">Old Booot</button>
+  <button id="glowing-sun-btn">Glowing Sun</button>
+  <button id="hazy-days-btn">Hazy Days</button>
+  <button id="heming-way-btn">Hemingway</button>
+  <button id="concentrate-btn">Concentrate</button>
+  <button id="grey-scale-btn">Gray Scale</button>
+  <button id="invert-btn">Invert</button>
+
+
+</div>
+
+<script>
+   	var img = new Image();
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+cropper.start(document.getElementById("canvas"), 0.5);
+
+var fileName = "";
+
+$(document).ready(function() {
+  $('#brightness').on('change',function(){
+      Caman('#canvas', img, function() {
+        var brightness = parseInt($('#brightness').val());
+      this.revert(false);
+      this.brightness(brightness).render();
+    });
+  });
+
+    $('#contrast').on('change',function(){
+      Caman('#canvas', img, function() {
+        var contrast = parseInt($('#contrast').val());
+      this.revert(false);
+      this.contrast(contrast).render();
+    });
+  });
+
+    $('#gamma').on('change',function(){
+      Caman('#canvas', img, function() {
+      var gamma = parseInt($('#gamma').val());
+      this.revert(false);
+      this.gamma(gamma).render();
+    });
+  });
+
+    $('#saturation').on('change',function(){
+      Caman('#canvas', img, function() {
+        var saturation = parseInt($('#saturation').val());
+      this.revert(false);
+      this.saturation(saturation).render();
+    });
+  });
+
+
+    $('#stackBlur').on('change',function(){
+      Caman('#canvas', img, function() {
+        var stackBlur = parseInt($('#stackBlur').val());
+      this.revert(false);
+      this.stackBlur(stackBlur).render();
+    });
+  });
+
+    $('#vibrance').on('change',function(){
+      var vibrance = parseInt($('#vibrance').val());
+      Caman('#canvas', img, function() {
+      this.revert(false);
+      this.vibrance(vibrance).render();
+    });
+  });
+
+    $('#exposure').on('change',function(){
+      Caman('#canvas', img, function() {
+        var exposure = parseInt($('#exposure').val());
+      this.revert(false);
+      this.exposure(exposure).render();
+    });
+  });
+
+    $('#noise').on('change',function(){
+      Caman('#canvas', img, function() {
+        var noise = parseInt($('#noise').val());
+      this.revert(false);
+      this.noise(noise).render();
+    });
+  });
+
+
+    $('#sharpen').on('change',function(){
+      Caman('#canvas', img, function() {
+        var sharpen = parseInt($('#sharpen').val());
+      this.revert(false);
+      this.sharpen(sharpen).render();
+    });
+  });
+
+    $('#sepia').on('change',function(){
+      Caman('#canvas', img, function() {
+        var sepia = parseInt($('#sepia').val());
+      this.revert(false);
+      this.sepia(sepia).render();
+    });
+  });
+
+
+    $('#hue').on('change',function(){
+      Caman('#canvas', img, function() {
+        var hue = parseInt($('#hue').val());
+      this.revert(false);
+      this.hue(hue).render();
+    });
+  });
+
+
+    $('#clip').on('change',function(){
+      Caman('#canvas', img, function() {
+        var clip = parseInt($('#clip').val());
+      this.revert(false);
+      this.clip(clip).render();
+    });
+  });
+
+
+  $("#vintage-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vintage().render();
+    });
+  });
+
+  $("#lomo-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.lomo().render();
+    });
+  });
+
+  $("#clarity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clarity().render();
+    });
+  });
+
+  $("#sincity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sinCity().render();
+    });
+  });
+
+  $("#crossprocess-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.crossProcess().render();
+    });
+  });
+
+  $("#pinhole-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.pinhole().render();
+    });
+  });
+
+  $("#nostalgia-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.nostalgia().render();
+    });
+  });
+
+  $("#majestic-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.herMajesty().render();
+    });
+  });
+
+  $("#sunrise-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      console.log('a');
+      this.sunrise().render();
+    });
+  });
+
+  $("#orange-peel-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.orangePeel().render();
+    });
+  });
+
+  $("#love-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.love().render();
+    });
+  });
+
+  $("#grunjy-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.grungy().render();
+    });
+  });
+
+  $("#jarques-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.jarques().render();
+    });
+  });
+
+  $("#old-boot-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.oldBoot().render();
+    });
+  });
+
+  $("#glowing-sun-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.glowingSun().render();
+    });
+  });
+
+  $("#hazy-days-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.hazyDays().render();
+    });
+  });
+
+  $("#heming-way-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.hemingway().render();
+    });
+  });
+
+  $("#concentrate-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.concentrate().render();
+    });
+  });
+
+  $("#grey-scale-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.greyscale().render();
+    });
+  });
+
+  $("#invert-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.invert().render();
+    });
+  });
+
+
+
+
+
+  
+
+
+  $("#heming-way-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+
+      this.hemingway().render();
+    });
+  });
+
+
+
+
+
+
+  $("#download-btn").on("click", function(e) {
+    var fileExtension = fileName.slice(-4);
+    if (fileExtension == ".jpg" || fileExtension == ".png") {
+      var actualName = fileName.substring(0, fileName.length - 4);
+    }
+    download(canvas, actualName + "-edited.jpg");
+  });
+
+  $("#upload-file").on("change", function() {
+    var file = document.querySelector("#upload-file").files[0];
+    var reader = new FileReader();
+
+    if (file) {
+      fileName = file.name;
+      reader.readAsDataURL(file);
+    }
+
+    reader.addEventListener(
+      "load",
+      function() {
+        img = new Image();
+        img.src = reader.result;
+
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          cropper.showImage(reader.result);
+          $("#canvas").removeAttr("data-caman-id");
+
+        };
+      },
+      false
+    );
+  });
+});
+
+function download(canvas, filename) {
+  var e;
+  var lnk = document.createElement("a");
+
+  lnk.download = filename;
+
+  lnk.href = canvas.toDataURL("image/jpeg", 0.8);
+
+  if (document.createEvent) {
+    e = document.createEvent("MouseEvents");
+    e.initMouseEvent(
+      "click",
+      true,
+      true,
+      window,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
+    lnk.dispatchEvent(e);
+  } else if (lnk.fireEvent) {
+    lnk.fireEvent("onclick");
+  }
+}
+
+$("#crop-image").on("click", function(e) {
+    Caman("#canvas", function() {
+      this.crop(canvas.width/3,canvas.height/3,100,100);
+      this.render();
+      
+    });
+  });
+
+
+
+   </script>
+   <script type="text/javascript">
+    var me = {};
+
+var you = {};
+
+function formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+}            
+
+//-- No use time. It is a javaScript effect.
+function insertChat(who, text, time = 0){
+    var control = "";
+    var date = formatAMPM(new Date());
+    
+    if (who == "me"){
+        
+        control = '<li style="width:100%">' +
+                        '<div class="msj macro">' +
+                            '<div class="text text-l">' +
+                                '<p>'+ text +'</p>' +
+                                '<p><small>'+date+'</small></p>' +
+                            '</div>' +
+                        '</div>' +
+                    '</li>';                    
+    }else{
+        control = '<li style="width:100%;">' +
+                        '<div class="msj-rta macro">' +
+                            '<div class="text text-r">' +
+                                '<p>'+text+'</p>' +
+                                '<p><small>'+date+'</small></p>' +
+                            '</div>' +
+                        '<div class="avatar" style="padding:0px 0px 0px 10px !important"></div>' +                                
+                  '</li>';
+    }
+    setTimeout(
+        function(){                        
+            $("ul").append(control);
+
+        }, time);
+    
+}
+
+function resetChat(){
+    $("ul").empty();
+}
+
+$(".mytext").on("keyup", function(e){
+    if (e.which == 13){
+        var text = $(this).val();
+        if (text !== ""){
+            insertChat("me", text);              
+            $(this).val('');
+        }
+    }
+});
+
+//-- Clear Chat
+resetChat();
+
+//-- Print Messages
+insertChat("me", "Hello Tom...", 0);  
+insertChat("you", "Hi, Pablo", 1500);
+insertChat("me", "What would you like to talk about today?", 3500);
+insertChat("you", "Tell me a joke",7000);
+insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 9500);
+insertChat("you", "LOL", 12000);
+insertChat("me", "Hello Tom...", 0);  
+insertChat("you", "Hi, Pablo", 1500);
+insertChat("me", "What would you like to talk about today?", 3500);
+insertChat("you", "Tell me a joke",7000);
+insertChat("me", "Spaceman: Computer! Computer! Do we bring battery?!", 9500);
+insertChat("you", "", 12000);
+</script>
+
+
+<script>
+  //socket connection client_side
+    var socket = io('http://localhost:4000/room');
+    var count = 0;
+  //room_name from http (query string)
+   //const {room} =  Qs.parse(location.search, { ignoreQueryPrefix: true });
+   //const {user} =  Qs.parse(location.search, { ignoreQueryPrefix: true });
+
+   //socket.emit('join',room);
+
+  //user_joining info
+   /*socket.emit('user',user);
+    socket.on('user', user_info);
+      function user_info(user)
+      {
+        //?
+        if(count == 0)
+        {
+        document.getElementById("one").innerHTML =  user + " " + "joins the room";
+        }
+        else if(count == 1)
+        {
+        document.getElementById("two").innerHTML =  user + " " + "joins the room";
+        }
+        count++;
+      }*/
+
+  // user leaving info
+    
+
+    var img = new Image();
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var fileName = "";
+
+//rotate-left
+$("#rotate-left-image").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.rotate(-90);
+      this.render();
+ });
+ var data= {
+     x:-90
+ }
+  socket.emit('rotate-left',data);
+});
+socket.on('rotate-left', rotate_left);
+    function rotate_left(data)
+    {
+      Caman("#canvas", img, function() {
+      this.rotate(data.x);
+      this.render();
+ });
+    }
+
+//rotate-right
+$("#rotate-right-image").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.rotate(90);
+      this.render();
+ });
+ var data= {
+     x:90
+ }
+  socket.emit('rotate-right',data);
+});
+socket.on('rotate-right', rotate_right);
+    function rotate_right(data)
+    {
+      Caman("#canvas", img, function() {
+      this.rotate(data.x);
+      this.render();
+ });
+    }
+
+  $("#brightness-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.brightness(5).render();
+ });
+ var data= {
+     x:5
+ }
+  socket.emit('bright-inc',data);
+  });
+
+//bright-inc
+  socket.on('bright-inc', bright_inc);
+    function bright_inc(data)
+    {
+            Caman("#canvas", img, function() {
+            this.brightness(data.x).render();
+ });
+    }
+
+  $("#brightness-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.brightness(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+   //bright-dec
+  socket.emit('bright-dec',data);
+  });
+
+  socket.on('bright-dec', bright_dec);
+    function bright_dec(data)
+    {
+            Caman("#canvas", img, function() {
+            this.brightness(data.x).render();
+ });
+      }
+
+  $("#contrast-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.contrast(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('contrast-inc',data);
+  });
+//contrast
+socket.on('contrast-inc', contrast_inc);
+    function contrast_inc(data)
+    {
+            Caman("#canvas", img, function() {
+            this.contrast(data.x).render();
+ });
+    }
+  $("#contrast-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.contrast(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('contrast-dec',data);
+  });
+
+  socket.on('contrast-dec', contrast_dec);
+    function contrast_dec(data)
+    {
+            Caman("#canvas", img, function() {
+            this.contrast(data.x).render();
+ });
+    }
+  $("#saturation-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.saturation(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('saturation-inc',data);
+  });
+  //saturation
+  socket.on('saturation-inc', saturation_inc);
+    function saturation_inc(data)
+    {
+            Caman("#canvas", img, function() {
+            this.saturation(data.x).render();
+ });
+    }
+  $("#saturation-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.saturation(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('saturation-dec',data);
+  });
+  socket.on('saturation-dec', saturation_dec);
+    function saturation_dec(data)
+    {
+            Caman("#canvas", img, function() {
+            this.saturation(data.x).render();
+ });
+    }
+
+  $("#stack-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.stackBlur(3).render();
+    });
+    var data= {
+     x:3
+ }
+  socket.emit('stack-inc',data);
+  });
+  //saturation
+  socket.on('stack-inc', stack_inc);
+    function stack_inc(data)
+    {
+            Caman("#canvas", img, function() {
+            this.stackBlur(data.x).render();
+ });
+    }
+
+  $("#vibrance-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vibrance(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('vibrance-inc',data);
+  });
+//vibrance
+socket.on('vibrance-inc', vibrance_inc);
+    function vibrance_inc(data)
+    {
+            Caman("#canvas", img, function() {
+            this.vibrance(data.x).render();
+ });
+    }
+    
+  $("#vibrance-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vibrance(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('vibrance-dec',data);
+  });
+  socket.on('vibrance-dec', vibrance_dec);
+    function vibrance_dec(data)
+    {
+            Caman("#canvas", img, function() {
+            this.vibrance(data.x).render();
+ });
+    }
+  $("#exposure-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.exposure(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('exposure-inc',data);
+  });
+//exposure
+socket.on('exposure-inc', exposure_inc);
+    function exposure_inc(data)
+    {
+            Caman("#canvas", img, function() {
+            this.exposure(data.x).render();
+ });
+    }
+  $("#exposure-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.exposure(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('exposure-inc',data);
+  });
+  socket.on('exposure-dec', exposure_dec);
+    function exposure_dec(data)
+    {
+    Caman("#canvas", img, function() {
+      this.exposure(data.x).render();
+ });
+    }
+  $("#noise-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.noise(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('noise-inc',data);
+  });
+//noise
+  socket.on('noise-inc', noise_inc);
+    function noise_inc(data)
+    {
+    Caman("#canvas", img, function() {
+      this.noise(data.x).render();
+ });
+    }
+  
+    /*$("#noise-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.noise(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('noise-dec',data);
+  });
+  socket.on('noise-dec', noise_dec);
+    function noise_dec(data)
+    {
+    Caman("#canvas", img, function() {
+      this.noise(data.x).render();
+ });
+    }*/
+
+  $("#sharpen-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sharpen(5).render();
+    });
+   var data= {
+     x:5
+ }
+  socket.emit('sharpen-inc',data);
+  });
+//sharpen
+socket.on('sharpen-inc', sharpen_inc);
+    function sharpen_inc(data)
+    {
+    Caman("#canvas", img, function() {
+      this.sharpen(data.x).render();
+ });
+    }
+
+  $("#sepia-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sepia(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('sepia',data);
+  });
+//sepia
+socket.on('sepia', sepia);
+    function sepia(data)
+    {
+    Caman("#canvas", img, function() {
+      this.sepia(data.x).render();
+ });
+    }
+
+  $("#hue-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hue(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('hue-inc',data);
+  });
+//hue
+socket.on('hue-inc', hue_inc);
+    function hue_inc(data)
+    {
+    Caman("#canvas", img, function() {
+      this.hue(data.x).render();
+ });
+    }
+
+  $("#blur-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.stackBlur(3).render();
+    });
+    var data= {
+     x:3
+ }
+  socket.emit('blur-inc',data);
+  });
+//blur
+  socket.on('blur-inc', blur_inc);
+    function blur_inc(data)
+    {
+    Caman("#canvas", img, function() {
+      this.stackBlur(data.x).render();
+ });
+    }
+
+  $("#gamma-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.gamma(0.1).render();
+    });
+    var data= {
+     x:0.1
+ }
+  socket.emit('gamma-inc',data);
+  });
+//gamma 
+socket.on('gamma-inc', gamma_inc);
+    function gamma_inc(data)
+    {
+    Caman("#canvas", img, function() {
+      this.gamma(data.x).render();
+ });
+    }
+
+  $("#clip-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clip(20).render();
+    });
+    var data= {
+     x:20
+ }
+  socket.emit('clip-inc',data);
+  });
+  //clip
+  socket.on('clip-inc', clip_inc);
+    function clip_inc(data)
+    {
+    Caman("#canvas", img, function() {
+      this.clip(data.x).render();
+ });
+    }
+//vintage
+  $("#vintage-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vintage().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('vintage');
+  });
+  socket.on('vintage', vintage);
+    function vintage(data)
+    {
+    Caman("#canvas", img, function() {
+      this.vintage().render();
+ });
+    }
+    
+  $("#lomo-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.lomo().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('lomo');
+  });
+//lomo
+socket.on('lomo', lomo);
+    function lomo(data)
+    {
+    Caman("#canvas", img, function() {
+      this.lomo().render();
+ });
+    }
+    
+  $("#clarity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clarity().render();
+    });
+    //clarity btn issue
+    var data = {
+      x:2
+    }
+    socket.emit('clarity');
+  });
+//calrity
+socket.on('clarity', clarity);
+    function clarity(data)
+    {
+    Caman("#canvas", img, function() {
+      this.clarity().render();
+ });
+    }
+
+  $("#sincity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sinCity().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('sincity-btn');
+  });
+//sin
+socket.on('sincity-btn', sincity_btn);
+    function sincity_btn(data)
+    {
+    Caman("#canvas", img, function() {
+      this.sinCity().render();
+ });
+    }
+  $("#crossprocess-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.crossProcess().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('crossprocess');
+  });
+//cross
+socket.on('crossprocess', crossprocess);
+    function crossprocess(data)
+    {
+    Caman("#canvas", img, function() {
+      this.crossProcess().render();
+ });
+    }
+
+  $("#pinhole-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.pinhole().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('pinhole');
+  });
+//pinhole
+socket.on('pinhole', pinhole);
+    function pinhole(data)
+    {
+    Caman("#canvas", img, function() {
+      this.pinhole().render();
+ });
+    }
+
+  $("#nostalgia-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.nostalgia().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('nostalgia');
+  });
+//nostalgia
+socket.on('nostalgia', nostalgia);
+    function nostalgia(data)
+    {
+    Caman("#canvas", img, function() {
+      this.nostalgia().render();
+ });
+    }
+
+  $("#majestic-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.herMajesty().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('hermajesty');
+  });
+//nostalgia
+socket.on('hermajesty', hermajesty);
+    function hermajesty(data)
+    {
+    Caman("#canvas", img, function() {
+      this.herMajesty().render();
+ });
+    }
+
+    $("#sunrise-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sunrise().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('sunrise');
+  });
+//sunrise
+socket.on('sunrise', sunrise);
+    function sunrise(data)
+    {
+    Caman("#canvas", img, function() {
+      this.sunrise().render();
+ });
+    }
+
+  $("#orange-peel-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.orangePeel().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('orange');
+  });
+//orange
+socket.on('orange', orange);
+    function orange(data)
+    {
+    Caman("#canvas", img, function() {
+      this.orangePeel().render();
+ });
+    }
+
+  $("#love-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.love().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('love');
+  });
+ //love
+  socket.on('love', love);
+    function love(data)
+    {
+    Caman("#canvas", img, function() {
+      this.love().render();
+ });
+    }
+
+  $("#grunjy-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.grungy().render();
+    });
+    var data = {
+      x:1
+    }
+    socket.emit('grungy');
+  });
+ //grungy
+ socket.on('grungy', grungy);
+    function grungy(data)
+    {
+    Caman("#canvas", img, function() {
+      this.grungy().render();
+ });
+    }
+
+  $("#jarques-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.jarques().render();
+    });
+    var data = {
+      x:1
+    }
+    socket.emit('jarque');
+  });
+ //jarque
+ socket.on('jarque', jarque);
+    function jarque(data)
+    {
+    Caman("#canvas", img, function() {
+      this.jarques().render();
+ });
+    }
+
+  $("#old-boot-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.oldBoot().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('old');
+  });
+//old
+socket.on('old', old);
+    function old(data)
+    {
+    Caman("#canvas", img, function() {
+      this.oldBoot().render();
+ });
+    }
+  $("#glowing-sun-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.glowingSun().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('glow');
+  });
+//glow
+socket.on('glow', glow);
+    function glow(data)
+    {
+    Caman("#canvas", img, function() {
+      this.glowingSun().render();
+ });
+    }
+
+  $("#hazy-days-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hazyDays().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('hazy');
+  });
+//hazy
+socket.on('hazy', hazy);
+    function hazy(data)
+    {
+    Caman("#canvas", img, function() {
+      this.hazyDays().render();
+ });
+    }
+
+  $("#heming-way-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hemingway().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('heming');
+  });
+//heming
+socket.on('heming', heming);
+    function heming(data)
+    {
+    Caman("#canvas", img, function() {
+      this.hemingway().render();
+ });
+    }
+
+  $("#concentrate-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.concentrate().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('concentrate');
+  });
+//concentrate
+socket.on('concentrate', concentrate);
+    function concentrate(data)
+    {
+    Caman("#canvas", img, function() {
+      this.concentrate().render();
+ });
+    }
+
+  $("#grey-scale-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.greyscale().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('grey');
+  });
+//greyScale
+socket.on('grey', grey);
+    function grey(data)
+    {
+    Caman("#canvas", img, function() {
+      this.greyscale().render();
+ });
+    }
+
+  $("#invert-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.invert().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('invert');
+  });
+//invert
+socket.on('invert', invert);
+    function invert(data)
+    {
+    Caman("#canvas", img, function() {
+      this.invert().render();
+ });
+    }
+
+  $("#download-btn").on("click", function(e) {
+    var fileExtension = fileName.slice(-4);
+    if (fileExtension == ".jpg" || fileExtension == ".png") {
+      var actualName = fileName.substring(0, fileName.length - 4);
+    }
+    download(canvas, actualName + "-edited.jpg");
+  });
+
+  $("#upload-file").on("change", function() {
+    var file = document.querySelector("#upload-file").files[0];
+    var reader = new FileReader();
+
+    if (file) {
+      fileName = file.name;
+      reader.readAsDataURL(file);
+    }
+
+    reader.addEventListener(
+      "load",
+      function() {
+        img = new Image();
+        img.src = reader.result;
+
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+
+          $("#canvas").removeAttr("data-caman-id");
+
+          var data = {
+              x:img.src
+          }
+      //    var zz = img.src;
+          socket.emit('upload',data);
+        };
+      },
+      false
+    );
+  });
+
+  //socket upload
+  socket.on('upload', function(data) {
+    
+  img = new Image();
+  img.src = data.x;
+
+
+  img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          $("#canvas").removeAttr("data-caman-id");
+  };
+ });
+function download(canvas, filename) {
+  var e;
+  var lnk = document.createElement("a");
+  lnk.download = filename;
+  lnk.href = canvas.toDataURL("image/jpeg", 0.8);
+
+  if (document.createEvent) {
+    e = document.createEvent("MouseEvents");
+    e.initMouseEvent(
+      "click",
+      true,
+      true,
+      window,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
+    lnk.dispatchEvent(e);
+  } else if (lnk.fireEvent) {
+    lnk.fireEvent("onclick");
+  }
+}
+
+   </script>
+
+</body>
+</html>

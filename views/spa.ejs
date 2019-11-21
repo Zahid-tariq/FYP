@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    
+
+    <title>Real Graphics</title>
+
+<style type="text/css">
+canvas {
+  height: 60%;
+  width: 60%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  border:2px solid #000000;
+}
+
+h2{
+  font-size: 18px;
+  padding: 10px 20px;
+  color: #575ed8;
+}
+
+#mario-chat{
+  max-width:300px;
+  margin: 30px auto;
+  border: 1px solid #ddd;
+  box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+  border-radius: 2px;
+}
+
+#chat-window{
+  height: 200px;
+  overflow: auto;
+  background: #f9f9f9;
+}
+
+#output p{
+  padding: 14px 0px;
+  margin: 0 20px;
+  border-bottom: 1px solid #e9e9e9;
+  color: #555;
+}
+
+#feedback p{
+  color: #aaa;
+  padding: 14px 0px;
+  margin: 0 20px;
+}
+
+#output strong{
+  color: #575ed8;
+}
+
+label{
+  box-sizing: border-box;
+  display: block;
+  padding: 10px 20px;
+}
+
+input{
+  padding: 10px 20px;
+  box-sizing: border-box;
+  background: #eee;
+  border: 0;
+  display: block;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  font-family: Nunito;
+  font-size: 16px;
+}
+
+#send{
+  background: #575ed8;
+  color: #fff;
+  font-size: 18px;
+  border: 0;
+  padding: 12px 0;
+  width: 100%;
+  border-radius: 0 0 2px 2px;
+}
+
+p.message {
+  margin-left: 30px;
+  width: 80%;
+  height: 40px;
+  font-size:15px;
+  font-family: 'Comfortaa', sans-serif;
+  padding: 2vh;
+}
+
+.message:nth-child(even) {
+  background-color: #81DAF5;
+}
+
+.message:nth-child(odd) {
+  background-color: #81BEF7;
+}
+
+.filter-name {
+  background: #795548;
+  padding: 2px;
+  display: inline-block;
+  color: white;
+  width: 100px;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.filter-group {
+  display: inline-block;
+  margin: 5px 15px;
+}
+
+body {
+  text-align: center;
+
+}
+
+h1 {
+  margin: 10px 0 0 0;
+  font-size: 2em;
+}
+
+.filter-buttons button,
+.editor-buttons button {
+  margin: 4px;
+  background: black;
+  border: none;
+  color: white;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.filter-buttons button.disabled {
+  background: #aaa;
+}
+
+.filter-buttons button {
+  padding: 2px 10px;
+  margin: 0;
+  cursor: pointer;
+  background: #ff5722;
+}
+
+.editor-buttons #reset-btn {
+  background: #f44336;
+}
+
+.editor-buttons #download-btn {
+  background: #009688;
+}
+
+.editor-buttons button:hover {
+  background: #795548;
+  cursor: pointer;
+}
+
+.editor-buttons {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+[type="file"] {
+  display: none;
+}
+
+[type="file"] + label {
+  margin: 10px 4px;
+  background: #673ab7;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+[type="file"] + label:hover {
+  background: #3399ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.color {
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+}
+
+.color.black { background-color: black; }
+.color.red { background-color: red; }
+.color.green { background-color: green; }
+.color.blue { background-color: blue; }
+.color.yellow { background-color: yellow; }
+
+</style>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+    <div class="w3-container">
+        <button class="w3-button w3-black"  onclick="leave()"> <a class="nav-link" href="/profile" style = "text-decoration:none;">Leave room</a> </button>
+      </div>
+
+  <h3 id = "one">  </h3>
+  <h3 id = "two">   </h3>
+  <h3 id = "three">   </h3>
+  <h3 id = "four">  </h3>
+  <h3 id = "five">   </h3>
+  <h3 id = "six">   </h3>
+  <h3 id = "seven">  </h3>
+  <h3 id = "eight">   </h3>
+  <h3 id = "nine">   </h3>
+  <h3 id = "ten">   </h3>
+<h3 id = "user"> </h3>
+
+  <canvas id ="canvas" class="canvas"></canvas>
+
+<div class="colors">
+    <div class="color black"></div>
+    <div class="color red"></div>
+    <div class="color green"></div>
+    <div class="color blue"></div>
+    <div class="color yellow"></div>
+  </div>
+
+<div class="filter-buttons">
+  <div class="filter-group">
+      <button id="brightness-dec">-</button>
+      <span class="filter-name">Brightness</span>
+      <button id="brightness-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="contrast-dec">-</button>
+    <span class="filter-name">Contrast</span>
+    <button id="contrast-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="saturation-dec">-</button>
+    <span class="filter-name">Saturation</span>
+    <button id="saturation-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="vibrance-dec">-</button>
+    <span class="filter-name">Vibrance</span>
+    <button id="vibrance-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="exposure-dec">-</button>
+    <span class="filter-name">Exposure</span>
+    <button id="exposure-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="noise-dec" class = "disabled">-</button>
+    <span class="filter-name">Noise</span>
+    <button id="noise-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="sharpen-dec" class="disabled">-</button>
+    <span class="filter-name">Sharpen</span>
+    <button id="sharpen-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="sepia-dec" class="disabled">-</button>
+    <span class="filter-name">Sepia</span>
+    <button id="sepia-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="hue-dec" class="disabled">-</button>
+    <span class="filter-name">Hue</span>
+    <button id="hue-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="blur-dec" class="disabled">-</button>
+    <span class="filter-name">Blur</span>
+    <button id="blur-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="gamma-dec" class="disabled">-</button>
+    <span class="filter-name">Gamma</span>
+    <button id="gamma-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="clip-dec" class="disabled">-</button>
+    <span class="filter-name">Clip</span>
+    <button id="clip-inc">+</button>
+  </div>
+  <div class="filter-group">
+    <button id="stack-dec" class="disabled">-</button>
+    <span class="filter-name">stack Blur</span>
+    <button id="stack-inc">+</button>
+  </div>
+</div>
+<div class="editor-buttons">
+  <input type="file" id="upload-file" placeholder="Upload a Picture" />
+  <label for="upload-file">Upload a Picture</label>
+  <button id="download-btn">Download Image</button>
+  <br/>
+
+  <button id ="rotate-left-image"> Rotate left </button>
+  <button id ="rotate-right-image"> Rotate Right </button>
+  <button id="crop-image">Crop</button>
+  <br/>
+  <button id="vintage-btn">Vintage</button>
+  <button id="lomo-btn">Lomo</button>
+  <button id="clarity-btn">Clarity</button>
+  <button id="sincity-btn">Sin City</button>
+  <button id="crossprocess-btn">Cross Process</button>
+  <button id="pinhole-btn">Pinhole</button>
+  <button id="nostalgia-btn">Nostalgia</button>
+  <button id="majestic-btn">Her Majesty</button>
+
+  <button id="sunrise-btn">Sunrise</button>
+  <button id="orange-peel-btn">Orange Peel</button>
+  <button id="love-btn">Love</button>
+  <button id="grunjy-btn">Grunjy</button>
+  <button id="jarques-btn">Jarques</button>
+  <button id="old-boot-btn">Old Booot</button>
+  <button id="glowing-sun-btn">Glowing Sun</button>
+  <button id="hazy-days-btn">Hazy Days</button>
+  <button id="heming-way-btn">Hemingway</button>
+  <button id="concentrate-btn">Concentrate</button>
+  <button id="grey-scale-btn">Gray Scale</button>
+  <button id="invert-btn">Invert</button>
+</div>
+
+<p  id="p12" style = "display:none"><%= user %>
+     </p>
+
+<div id="mario-chat">
+  <h2 style = "color:black;">Real Graphics_Chat</h2>
+  <div id="chat-window">
+      <div id="output"></div>
+      <div id="feedback"></div>
+  </div>
+  <form>
+   <input id="message" type="text" placeholder="Message" />
+   <span id = "emoji" class = "emoji" style='font-size:15px;'>&#128578;</span>
+   <span id = "emoji" class = "emoji" style='font-size:15px;'>&#128514;</span>
+   <span id = "emoji" class = "emoji" style='font-size:15px;'>&#128517;</span>
+   <span id = "emoji" class = "emoji" style='font-size:15px;'>&#128521;</span>
+   <span  id = "emoji" class = "emoji" style='font-size:15px;'>&#128526;</span>
+   <span id = "emoji" class = "emoji" style='font-size:15px;'>&#128543;</span>
+   <span id = "emoji" class = "emoji" style='font-size:15px;'>&#128557;</span>
+   <button class="w3-button w3-black" type = "submit" id="send"><i class="fa fa-send-o" style="font-size:24px">Send</i></button>
+  </form>
+</div>
+
+<script>
+  //socket connection client_side
+    var socket = io.connect();
+
+   var count = 0;
+  //room_name from http (query string)
+   const {room} =  Qs.parse(location.search, { ignoreQueryPrefix: true });
+   var user =  document.getElementById('p12').innerHTML;
+
+   socket.emit('join',room);
+
+  //user_joining info
+   socket.emit('user',user);
+    socket.on('user', user_info);
+	  	function user_info(user)
+	  	{
+        //?
+        if(count == 0)
+        {
+        document.getElementById('one').innerHTML =  user + " " + "joins the room";
+        $("#one").delay(20000).fadeOut();
+        }
+        else if(count == 1)
+        {
+        document.getElementById('two').innerHTML =  user + " " + "joins the room";
+        $("#two").delay(20000).fadeOut();
+        }
+        else if(count == 2)
+        {
+        document.getElementById('three').innerHTML =  user + " " + "joins the room";
+        $("#three").delay(20000).fadeOut();  
+      }
+        else if(count == 3)
+        {
+        document.getElementById('four').innerHTML =  user + " " + "joins the room";
+        $("#four").delay(20000).fadeOut();  
+      }
+        else if(count == 4)
+        {
+        document.getElementById('five').innerHTML =  user + " " + "joins the room";
+        $("#five").delay(20000).fadeOut();  
+      }
+        else if(count == 5)
+        {
+        document.getElementById('six').innerHTML =  user + " " + "joins the room";
+        $("#six").delay(20000).fadeOut();  
+      }
+        else if(count == 6)
+        {
+        document.getElementById('seven').innerHTML =  user + " " + "joins the room";
+        $("#seven").delay(20000).fadeOut();  
+      }
+        else if(count == 7)
+        {
+        document.getElementById('eight').innerHTML =  user + " " + "joins the room";
+        $("#eight").delay(20000).fadeOut();
+      }
+        else if(count == 8)
+        {
+        document.getElementById('nine').innerHTML =  user + " " + "joins the room";
+        $("#nine").delay(20000).fadeOut();  
+      }
+        else if(count == 9)
+        {
+        document.getElementById('ten').innerHTML =  user + " " + "joins the room";
+        $("#ten").delay(20000).fadeOut();  
+      }
+        count++;
+      }
+
+      //opacity_fadeout
+
+      function leave()
+    {
+      data={
+        x:"leave the room"
+      }
+      //console.log('done');
+      socket.emit('leave',data);
+    }
+
+    socket.on('leave', leave1);
+		function leave1(data)
+		{
+      document.getElementById('user').innerHTML = data.y  + " " + data.x;
+      $("#user").delay(20000).fadeOut();
+    }
+
+   	var img = new Image();
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var fileName = "";
+
+//rotate-left
+$("#rotate-left-image").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.rotate(-90);
+      this.render();
+ });
+ var data= {
+     x:-90
+ }
+  socket.emit('rotate-left',data);
+});
+socket.on('rotate-left', rotate_left);
+		function rotate_left(data)
+		{
+      Caman("#canvas", img, function() {
+      this.rotate(data.x);
+      this.render();
+ });
+    }
+
+//rotate-right
+$("#rotate-right-image").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.rotate(90);
+      this.render();
+ });
+ var data= {
+     x:90
+ }
+  socket.emit('rotate-right',data);
+});
+socket.on('rotate-right', rotate_right);
+		function rotate_right(data)
+		{
+      Caman("#canvas", img, function() {
+      this.rotate(data.x);
+      this.render();
+ });
+    }
+//
+$("#brightness-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.brightness(5).render();
+ });
+ var data= {
+     x:5
+ }
+  socket.emit('bright-inc',data);
+  });
+
+//bright-inc
+  socket.on('bright-inc', bright_inc);
+		function bright_inc(data)
+		{
+            Caman("#canvas", img, function() {
+            this.brightness(data.x).render();
+ });
+	  }
+
+  $("#brightness-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.brightness(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+   //bright-dec
+  socket.emit('bright-dec',data);
+  });
+
+  socket.on('bright-dec', bright_dec);
+		function bright_dec(data)
+		{
+            Caman("#canvas", img, function() {
+            this.brightness(data.x).render();
+ });
+	    }
+
+  $("#contrast-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.contrast(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('contrast-inc',data);
+  });
+//contrast
+socket.on('contrast-inc', contrast_inc);
+		function contrast_inc(data)
+		{
+            Caman("#canvas", img, function() {
+            this.contrast(data.x).render();
+ });
+	  }
+  $("#contrast-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.contrast(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('contrast-dec',data);
+  });
+
+  socket.on('contrast-dec', contrast_dec);
+		function contrast_dec(data)
+		{
+            Caman("#canvas", img, function() {
+            this.contrast(data.x).render();
+ });
+	  }
+  $("#saturation-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.saturation(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('saturation-inc',data);
+  });
+  //saturation
+  socket.on('saturation-inc', saturation_inc);
+		function saturation_inc(data)
+		{
+            Caman("#canvas", img, function() {
+            this.saturation(data.x).render();
+ });
+	  }
+  $("#saturation-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.saturation(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('saturation-dec',data);
+  });
+  socket.on('saturation-dec', saturation_dec);
+		function saturation_dec(data)
+		{
+            Caman("#canvas", img, function() {
+            this.saturation(data.x).render();
+ });
+    }
+
+  $("#stack-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.stackBlur(3).render();
+    });
+    var data= {
+     x:3
+ }
+  socket.emit('stack-inc',data);
+  });
+  //saturation
+  socket.on('stack-inc', stack_inc);
+		function stack_inc(data)
+		{
+            Caman("#canvas", img, function() {
+            this.stackBlur(data.x).render();
+ });
+    }
+
+  $("#vibrance-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vibrance(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('vibrance-inc',data);
+  });
+//vibrance
+socket.on('vibrance-inc', vibrance_inc);
+		function vibrance_inc(data)
+		{
+            Caman("#canvas", img, function() {
+            this.vibrance(data.x).render();
+ });
+    }
+    
+  $("#vibrance-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vibrance(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('vibrance-dec',data);
+  });
+  socket.on('vibrance-dec', vibrance_dec);
+		function vibrance_dec(data)
+		{
+            Caman("#canvas", img, function() {
+            this.vibrance(data.x).render();
+ });
+    }
+  $("#exposure-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.exposure(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('exposure-inc',data);
+  });
+//exposure
+socket.on('exposure-inc', exposure_inc);
+		function exposure_inc(data)
+		{
+            Caman("#canvas", img, function() {
+            this.exposure(data.x).render();
+ });
+    }
+  $("#exposure-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.exposure(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('exposure-inc',data);
+  });
+  socket.on('exposure-dec', exposure_dec);
+		function exposure_dec(data)
+		{
+    Caman("#canvas", img, function() {
+      this.exposure(data.x).render();
+ });
+    }
+  $("#noise-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.noise(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('noise-inc',data);
+  });
+//noise
+  socket.on('noise-inc', noise_inc);
+		function noise_inc(data)
+		{
+    Caman("#canvas", img, function() {
+      this.noise(data.x).render();
+ });
+    }
+  
+    /*$("#noise-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.noise(-5).render();
+    });
+    var data= {
+     x:-5
+ }
+  socket.emit('noise-dec',data);
+  });
+  socket.on('noise-dec', noise_dec);
+		function noise_dec(data)
+		{
+    Caman("#canvas", img, function() {
+      this.noise(data.x).render();
+ });
+    }*/
+
+  $("#sharpen-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sharpen(5).render();
+    });
+   var data= {
+     x:5
+ }
+  socket.emit('sharpen-inc',data);
+  });
+//sharpen
+socket.on('sharpen-inc', sharpen_inc);
+		function sharpen_inc(data)
+		{
+    Caman("#canvas", img, function() {
+      this.sharpen(data.x).render();
+ });
+    }
+
+  $("#sepia-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sepia(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('sepia',data);
+  });
+//sepia
+socket.on('sepia', sepia);
+		function sepia(data)
+		{
+    Caman("#canvas", img, function() {
+      this.sepia(data.x).render();
+ });
+    }
+
+  $("#hue-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hue(5).render();
+    });
+    var data= {
+     x:5
+ }
+  socket.emit('hue-inc',data);
+  });
+//hue
+socket.on('hue-inc', hue_inc);
+		function hue_inc(data)
+		{
+    Caman("#canvas", img, function() {
+      this.hue(data.x).render();
+ });
+    }
+
+  $("#blur-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.stackBlur(3).render();
+    });
+    var data= {
+     x:3
+ }
+  socket.emit('blur-inc',data);
+  });
+//blur
+  socket.on('blur-inc', blur_inc);
+		function blur_inc(data)
+		{
+    Caman("#canvas", img, function() {
+      this.stackBlur(data.x).render();
+ });
+    }
+
+  $("#gamma-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.gamma(0.1).render();
+    });
+    var data= {
+     x:0.1
+ }
+  socket.emit('gamma-inc',data);
+  });
+//gamma 
+socket.on('gamma-inc', gamma_inc);
+		function gamma_inc(data)
+		{
+    Caman("#canvas", img, function() {
+      this.gamma(data.x).render();
+ });
+    }
+
+  $("#clip-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clip(20).render();
+    });
+    var data= {
+     x:20
+ }
+  socket.emit('clip-inc',data);
+  });
+  //clip
+  socket.on('clip-inc', clip_inc);
+		function clip_inc(data)
+		{
+    Caman("#canvas", img, function() {
+      this.clip(data.x).render();
+ });
+    }
+//vintage
+  $("#vintage-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vintage().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('vintage');
+  });
+  socket.on('vintage', vintage);
+		function vintage(data)
+		{
+    Caman("#canvas", img, function() {
+      this.vintage().render();
+ });
+    }
+    
+  $("#lomo-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.lomo().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('lomo');
+  });
+//lomo
+socket.on('lomo', lomo);
+		function lomo(data)
+		{
+    Caman("#canvas", img, function() {
+      this.lomo().render();
+ });
+    }
+    
+  $("#clarity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clarity().render();
+    });
+    //clarity btn issue
+    var data = {
+      x:2
+    }
+    socket.emit('clarity');
+  });
+//calrity
+socket.on('clarity', clarity);
+		function clarity(data)
+		{
+    Caman("#canvas", img, function() {
+      this.clarity().render();
+ });
+    }
+
+  $("#sincity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sinCity().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('sincity-btn');
+  });
+//sin
+socket.on('sincity-btn', sincity_btn);
+		function sincity_btn(data)
+		{
+    Caman("#canvas", img, function() {
+      this.sinCity().render();
+ });
+    }
+  $("#crossprocess-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.crossProcess().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('crossprocess');
+  });
+//cross
+socket.on('crossprocess', crossprocess);
+		function crossprocess(data)
+		{
+    Caman("#canvas", img, function() {
+      this.crossProcess().render();
+ });
+    }
+
+  $("#pinhole-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.pinhole().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('pinhole');
+  });
+//pinhole
+socket.on('pinhole', pinhole);
+		function pinhole(data)
+		{
+    Caman("#canvas", img, function() {
+      this.pinhole().render();
+ });
+    }
+
+  $("#nostalgia-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.nostalgia().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('nostalgia');
+  });
+//nostalgia
+socket.on('nostalgia', nostalgia);
+		function nostalgia(data)
+		{
+    Caman("#canvas", img, function() {
+      this.nostalgia().render();
+ });
+    }
+
+  $("#majestic-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.herMajesty().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('hermajesty');
+  });
+//nostalgia
+socket.on('hermajesty', hermajesty);
+		function hermajesty(data)
+		{
+    Caman("#canvas", img, function() {
+      this.herMajesty().render();
+ });
+    }
+
+    $("#sunrise-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sunrise().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('sunrise');
+  });
+//sunrise
+socket.on('sunrise', sunrise);
+		function sunrise(data)
+		{
+    Caman("#canvas", img, function() {
+      this.sunrise().render();
+ });
+    }
+
+  $("#orange-peel-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.orangePeel().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('orange');
+  });
+//orange
+socket.on('orange', orange);
+		function orange(data)
+		{
+    Caman("#canvas", img, function() {
+      this.orangePeel().render();
+ });
+    }
+
+  $("#love-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.love().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('love');
+  });
+ //love
+  socket.on('love', love);
+		function love(data)
+		{
+    Caman("#canvas", img, function() {
+      this.love().render();
+ });
+    }
+
+  $("#grunjy-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.grungy().render();
+    });
+    var data = {
+      x:1
+    }
+    socket.emit('grungy');
+  });
+ //grungy
+ socket.on('grungy', grungy);
+		function grungy(data)
+		{
+    Caman("#canvas", img, function() {
+      this.grungy().render();
+ });
+    }
+
+  $("#jarques-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.jarques().render();
+    });
+    var data = {
+      x:1
+    }
+    socket.emit('jarque');
+  });
+ //jarque
+ socket.on('jarque', jarque);
+		function jarque(data)
+		{
+    Caman("#canvas", img, function() {
+      this.jarques().render();
+ });
+    }
+
+  $("#old-boot-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.oldBoot().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('old');
+  });
+//old
+socket.on('old', old);
+		function old(data)
+		{
+    Caman("#canvas", img, function() {
+      this.oldBoot().render();
+ });
+    }
+  $("#glowing-sun-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.glowingSun().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('glow');
+  });
+//glow
+socket.on('glow', glow);
+		function glow(data)
+		{
+    Caman("#canvas", img, function() {
+      this.glowingSun().render();
+ });
+    }
+
+  $("#hazy-days-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hazyDays().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('hazy');
+  });
+//hazy
+socket.on('hazy', hazy);
+		function hazy(data)
+		{
+    Caman("#canvas", img, function() {
+      this.hazyDays().render();
+ });
+    }
+
+  $("#heming-way-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hemingway().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('heming');
+  });
+//heming
+socket.on('heming', heming);
+		function heming(data)
+		{
+    Caman("#canvas", img, function() {
+      this.hemingway().render();
+ });
+    }
+
+  $("#concentrate-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.concentrate().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('concentrate');
+  });
+//concentrate
+socket.on('concentrate', concentrate);
+		function concentrate(data)
+		{
+    Caman("#canvas", img, function() {
+      this.concentrate().render();
+ });
+    }
+
+  $("#grey-scale-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.greyscale().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('grey');
+  });
+//greyScale
+socket.on('grey', grey);
+		function grey(data)
+		{
+    Caman("#canvas", img, function() {
+      this.greyscale().render();
+ });
+    }
+
+  $("#invert-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.invert().render();
+    });
+    var data = {
+      x:2
+    }
+    socket.emit('invert');
+  });
+//invert
+socket.on('invert', invert);
+		function invert(data)
+		{
+    Caman("#canvas", img, function() {
+      this.invert().render();
+ });
+    }
+
+  $("#download-btn").on("click", function(e) {
+    var fileExtension = fileName.slice(-4);
+    if (fileExtension == ".jpg" || fileExtension == ".png") {
+      var actualName = fileName.substring(0, fileName.length - 4);
+    }
+    download(canvas, actualName + "-edited.jpg");
+  });
+
+  $("#upload-file").on("change", function() {
+    var file = document.querySelector("#upload-file").files[0];
+    var reader = new FileReader();
+
+    if (file) {
+      fileName = file.name;
+      reader.readAsDataURL(file);
+    }
+
+    reader.addEventListener(
+      "load",
+      function() {
+        img = new Image();
+        img.src = reader.result;
+
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+
+          $("#canvas").removeAttr("data-caman-id");
+
+          var data = {
+              x:img.src
+          }
+      //    var zz = img.src;
+          socket.emit('upload',data);
+        };
+      },
+      false
+    );
+  });
+
+  //socket upload
+  socket.on('upload', function(data) {
+    
+  img = new Image();
+  img.src = data.x;
+  img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          $("#canvas").removeAttr("data-caman-id");
+  };
+ });
+function download(canvas, filename) {
+  var e;
+  var lnk = document.createElement("a");
+  lnk.download = filename;
+  lnk.href = canvas.toDataURL("image/jpeg", 0.8);
+
+  if (document.createEvent) {
+    e = document.createEvent("MouseEvents");
+    e.initMouseEvent(
+      "click",
+      true,
+      true,
+      window,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
+    lnk.dispatchEvent(e);
+  } else if (lnk.fireEvent) {
+    lnk.fireEvent("onclick");
+  }
+}
+   </script>
+
+<script>
+$(function () {
+
+  $(function() { 
+    $(".emoji").click(function() {
+        $('#message').val($('#message').val() + $(this).html());
+    });
+});
+
+var $output = $('#message');
+var $output2 = $('#output');
+var $output3 = $('#feedback');
+//jquery
+var socket = io.connect();
+
+var user =  document.getElementById('p12').innerHTML;
+socket.emit('join',room);
+
+$('form').on('submit', function (event) {
+  event.preventDefault();
+  $output = $('#message').val();
+  $('#message').val('');
+
+  var data = {
+    x: $output,
+    y:user
+  }
+
+  socket.emit('chat',data)
+  });
+//?
+    //typing a message
+    $output.bind("keypress", function() {   //keypress event
+      socket.emit('typing',user)
+    })
+
+  socket.on('typing', (user) => {
+      //console.log(user);
+      $output3.html("<p><i>" + user + " is typing a message..." + "</i></p>")
+    });
+
+ socket.on('chat',function(data){
+   //console.log(data.x);
+   $output3.html('');
+   $output2.append('<p class = "message">' + data.y + ":" + " " + data.x + '</p>');
+   document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+  });
+});
+  </script>
+
+<script>
+$(function() {
+
+var canvas = document.getElementsByClassName('canvas')[0];
+var colors = document.getElementsByClassName('color');
+var context = canvas.getContext('2d');
+
+var current = {
+  color: 'black'
+};
+var drawing = false;
+
+canvas.addEventListener('mousedown', onMouseDown, false);
+canvas.addEventListener('mouseup', onMouseUp, false);
+canvas.addEventListener('mouseout', onMouseUp, false);
+canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+
+//Touch support for mobile devices
+canvas.addEventListener('touchstart', onMouseDown, false);
+canvas.addEventListener('touchend', onMouseUp, false);
+canvas.addEventListener('touchcancel', onMouseUp, false);
+canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
+
+for (var i = 0; i < colors.length; i++){
+  colors[i].addEventListener('click', onColorUpdate, false);
+}
+
+socket.on('drawing', onDrawingEvent);
+
+window.addEventListener('resize', onResize, false);
+onResize();
+
+function drawLine(x0, y0, x1, y1, color, emit){
+  context.beginPath();
+  context.moveTo(x0, y0);
+  context.lineTo(x1, y1);
+  context.strokeStyle = color;
+  context.lineWidth = 5;
+  context.stroke();
+  context.closePath();
+
+  if (!emit) { return; }
+  var w = canvas.width;
+  var h = canvas.height;
+
+  var data = {
+    x0: x0 / w,
+    y0: y0 / h,
+    x1: x1 / w,
+    y1: y1 / h,
+    color: color
+          }
+          socket.emit('drawing',data);
+}
+
+function onMouseDown(e){
+  drawing = true;
+  current.x = e.clientX||e.touches[0].clientX;
+  current.y = e.clientY||e.touches[0].clientY;
+}
+
+function onMouseUp(e){
+  if (!drawing) { return; }
+  drawing = false;
+  drawLine(current.x, current.y, e.clientX||e.touches[0].clientX, e.clientY||e.touches[0].clientY, current.color, true);
+}
+
+function onMouseMove(e){
+  if (!drawing) { return; }
+  drawLine(current.x, current.y, e.clientX||e.touches[0].clientX, e.clientY||e.touches[0].clientY, current.color, true);
+  current.x = e.clientX||e.touches[0].clientX;
+  current.y = e.clientY||e.touches[0].clientY;
+}
+
+function onColorUpdate(e){
+  current.color = e.target.className.split(' ')[1];
+}
+
+// limit the number of events per second
+function throttle(callback, delay) {
+  var previousCall = new Date().getTime();
+  return function() {
+    var time = new Date().getTime();
+
+    if ((time - previousCall) >= delay) {
+      previousCall = time;
+      callback.apply(null, arguments);
+    }
+  };
+}
+
+function onDrawingEvent(data){
+  var w = canvas.width;
+  var h = canvas.height;
+  drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+}
+
+// make the canvas fill its parent
+function onResize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+});
+</script>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+</body>
+</html>

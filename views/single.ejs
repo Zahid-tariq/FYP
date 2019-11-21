@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    
+
+    <title>Real Graphics</title>
+
+    <!-- Scripts -->
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link rel="icon" type="text/css" href="logo.png">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+
+    <!-- Styles -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+
+body
+{
+  font-family: 'Nunito', sans-serif;
+}
+
+.filter-name {
+  background: #795548;
+  padding: 2px;
+  display: inline-block;
+  color: white;
+  width: 100px;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.filter-group {
+  display: inline-block;
+  margin: 5px 15px;
+}
+
+body {
+  text-align: center;
+
+}
+
+h1 {
+  margin: 10px 0 0 0;
+  font-size: 2em;
+}
+
+canvas {
+  height: 60%;
+  width: 60%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  border:2px solid #000000;
+}
+
+.filter-buttons button,
+.editor-buttons button {
+  margin: 4px;
+  background: black;
+  border: none;
+  color: white;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.editor-buttons input {
+  margin: 4px;
+  background: black;
+  border: none;
+  color: white;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.filter-buttons button.disabled {
+  background: #aaa;
+}
+
+.filter-buttons button {
+  padding: 2px 10px;
+  margin: 0;
+  cursor: pointer;
+  background: #ff5722;
+}
+
+.editor-buttons #reset-btn {
+  background: #f44336;
+}
+
+.editor-buttons #download-btn {
+  background: #009688;
+}
+
+.editor-buttons button:hover {
+  background: #795548;
+  cursor: pointer;
+}
+
+.editor-buttons {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+[type="file"] {
+  display: none;
+}
+
+[type="file"] + label {
+  margin: 10px 4px;
+  background: #673ab7;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+[type="file"] + label:hover {
+  background: #3399ff;
+}
+.color {
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+}
+
+.color.black { background-color: black; }
+.color.red { background-color: red; }
+.color.green { background-color: green; }
+.color.blue { background-color: blue; }
+.color.yellow { background-color: yellow; }
+    </style>
+    
+ </head>
+<body>
+
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="home.html" style="color:#636B6F;">REAL GRAPHICS
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto">
+
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/profile">Back</a>
+                                </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+            <canvas class = "canvas" id="canvas"></canvas>
+
+
+<div class="colors">
+    <div class="color black"></div>
+    <div class="color red"></div>
+    <div class="color green"></div>
+    <div class="color blue"></div>
+    <div class="color yellow"></div>
+  </div>
+
+          <div class="filter-buttons">
+            <div class="filter-group">
+                <button id="brightness-dec">-</button>
+                <span class="filter-name">Brightness</span>
+                <button id="brightness-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="contrast-dec">-</button>
+              <span class="filter-name">Contrast</span>
+              <button id="contrast-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="saturation-dec">-</button>
+              <span class="filter-name">Saturation</span>
+              <button id="saturation-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="vibrance-dec">-</button>
+              <span class="filter-name">Vibrance</span>
+              <button id="vibrance-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="exposure-dec">-</button>
+              <span class="filter-name">Exposure</span>
+              <button id="exposure-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="noise-dec" class = "disabled">-</button>
+              <span class="filter-name">Noise</span>
+              <button id="noise-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="sharpen-dec" class="disabled">-</button>
+              <span class="filter-name">Sharpen</span>
+              <button id="sharpen-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="sepia-dec" class="disabled">-</button>
+              <span class="filter-name">Sepia</span>
+              <button id="sepia-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="hue-dec" class="disabled">-</button>
+              <span class="filter-name">Hue</span>
+              <button id="hue-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="blur-dec" class="disabled">-</button>
+              <span class="filter-name">Blur</span>
+              <button id="blur-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="gamma-dec" class="disabled">-</button>
+              <span class="filter-name">Gamma</span>
+              <button id="gamma-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="clip-dec" class="disabled">-</button>
+              <span class="filter-name">Clip</span>
+              <button id="clip-inc">+</button>
+            </div>
+            <div class="filter-group">
+              <button id="stack-dec" class="disabled">-</button>
+              <span class="filter-name">stack Blur</span>
+              <button id="stack-inc">+</button>
+            </div>
+          </div>
+          <div class="editor-buttons">
+            <input type="file" id="upload-file" placeholder="Upload a Picture" />
+            <label for="upload-file">Upload a Picture</label>
+            <button id="download-btn">Download Image</button>
+            <br/>
+          
+            <button id ="rotate-left-image"> Rotate left </button>
+            <button id ="rotate-right-image"> Rotate Right </button>
+            <button id="crop-image">Crop</button>
+            <br/>
+            <button id="vintage-btn">Vintage</button>
+            <button id="lomo-btn">Lomo</button>
+            <button id="clarity-btn">Clarity</button>
+            <button id="sincity-btn">Sin City</button>
+            <button id="crossprocess-btn">Cross Process</button>
+            <button id="pinhole-btn">Pinhole</button>
+            <button id="nostalgia-btn">Nostalgia</button>
+            <button id="majestic-btn">Her Majesty</button>
+          
+            <button id="sunrise-btn">Sunrise</button>
+            <button id="orange-peel-btn">Orange Peel</button>
+            <button id="love-btn">Love</button>
+            <button id="grunjy-btn">Grunjy</button>
+            <button id="jarques-btn">Jarques</button>
+            <button id="old-boot-btn">Old Booot</button>
+            <button id="glowing-sun-btn">Glowing Sun</button>
+            <button id="hazy-days-btn">Hazy Days</button>
+            <button id="heming-way-btn">Hemingway</button>
+            <button id="concentrate-btn">Concentrate</button>
+            <button id="grey-scale-btn">Gray Scale</button>
+            <button id="invert-btn">Invert</button>
+          </div>
+
+
+<script>
+   	var img = new Image();
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+var fileName = "";
+
+
+//rotate-left
+$("#rotate-left-image").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.rotate(-90);
+      this.render();
+ });
+});
+
+//rotate-right
+$("#rotate-right-image").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.rotate(90);
+      this.render();
+ });
+});
+
+$("#brightness-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.brightness(5).render();
+ });
+  });
+
+
+  $("#brightness-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.brightness(-5).render();
+    });
+  });
+
+
+  $("#contrast-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.contrast(5).render();
+    });
+  });
+
+  $("#contrast-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.contrast(-5).render();
+    });
+  });
+
+  $("#saturation-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.saturation(5).render();
+    });
+  });
+
+  $("#saturation-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.saturation(-5).render();
+    });
+  });
+
+  $("#stack-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.stackBlur(3).render();
+    });
+  });
+
+  $("#vibrance-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vibrance(5).render();
+    });
+  });
+
+  $("#vibrance-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vibrance(-5).render();
+    });
+  });
+
+  $("#exposure-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.exposure(5).render();
+    });
+  });
+
+  $("#exposure-dec").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.exposure(-5).render();
+    });
+  });
+
+  $("#noise-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.noise(5).render();
+    });
+  });
+
+  $("#sharpen-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sharpen(5).render();
+    });
+  });
+
+  $("#sepia-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sepia(5).render();
+    });
+  });
+
+  $("#hue-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hue(5).render();
+    });
+  });
+
+  $("#blur-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.stackBlur(3).render();
+    });
+  });
+
+  $("#gamma-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.gamma(0.1).render();
+    });
+  });
+
+  $("#clip-inc").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clip(20).render();
+    });
+  });
+  
+  $("#vintage-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.vintage().render();
+    });
+  });
+
+  $("#lomo-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.lomo().render();
+    });
+  });
+
+  $("#clarity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.clarity().render();
+    });
+  });
+
+  $("#sincity-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sinCity().render();
+    });
+  });
+
+  $("#crossprocess-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.crossProcess().render();
+    });
+  });
+
+  $("#pinhole-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.pinhole().render();
+    });
+  });
+
+  $("#nostalgia-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.nostalgia().render();
+    });
+  });
+
+  $("#majestic-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.herMajesty().render();
+    });
+  });
+
+    $("#sunrise-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.sunrise().render();
+    });
+  });
+
+  $("#orange-peel-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.orangePeel().render();
+    });
+  });
+
+  $("#love-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.love().render();
+    });
+  });
+
+  $("#grunjy-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.grungy().render();
+    });
+  });
+
+  $("#jarques-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.jarques().render();
+    });
+  });
+
+  $("#old-boot-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.oldBoot().render();
+    });
+  });
+
+  $("#glowing-sun-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.glowingSun().render();
+    });
+  });
+
+  $("#hazy-days-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hazyDays().render();
+    });
+  });
+
+  $("#heming-way-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.hemingway().render();
+    });
+  });
+
+  $("#concentrate-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.concentrate().render();
+    });
+  });
+
+  $("#grey-scale-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.greyscale().render();
+    });;
+  });
+
+  $("#invert-btn").on("click", function(e) {
+    Caman("#canvas", img, function() {
+      this.invert().render();
+    });
+  });
+
+
+  $("#download-btn").on("click", function(e) {
+    var fileExtension = fileName.slice(-4);
+    if (fileExtension == ".jpg" || fileExtension == ".png") {
+      var actualName = fileName.substring(0, fileName.length - 4);
+    }
+    download(canvas, actualName + "-edited.jpg");
+  });
+
+  $("#upload-file").on("change", function() {
+    var file = document.querySelector("#upload-file").files[0];
+    var reader = new FileReader();
+
+    if (file) {
+      fileName = file.name;
+      reader.readAsDataURL(file);
+    }
+
+    reader.addEventListener(
+      "load",
+      function() {
+        img = new Image();
+        img.src = reader.result;
+
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          $("#canvas").removeAttr("data-caman-id");
+        };
+      },
+      false
+    );
+  });
+
+
+function download(canvas, filename) {
+  var e;
+  var lnk = document.createElement("a");
+  lnk.download = filename;
+  lnk.href = canvas.toDataURL("image/jpeg", 0.8);
+
+  if (document.createEvent) {
+    e = document.createEvent("MouseEvents");
+    e.initMouseEvent(
+      "click",
+      true,
+      true,
+      window,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
+    lnk.dispatchEvent(e);
+  } else if (lnk.fireEvent) {
+    lnk.fireEvent("onclick");
+  }
+}
+   </script>
+
+<script>
+$(function() {
+
+var canvas = document.getElementsByClassName('canvas')[0];
+var colors = document.getElementsByClassName('color');
+var context = canvas.getContext('2d');
+
+var current = {
+  color: 'black'
+};
+var drawing = false;
+
+canvas.addEventListener('mousedown', onMouseDown, false);
+canvas.addEventListener('mouseup', onMouseUp, false);
+canvas.addEventListener('mouseout', onMouseUp, false);
+canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+
+//Touch support for mobile devices
+canvas.addEventListener('touchstart', onMouseDown, false);
+canvas.addEventListener('touchend', onMouseUp, false);
+canvas.addEventListener('touchcancel', onMouseUp, false);
+canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
+
+for (var i = 0; i < colors.length; i++){
+  colors[i].addEventListener('click', onColorUpdate, false);
+}
+
+window.addEventListener('resize', onResize, false);
+onResize();
+
+function drawLine(x0, y0, x1, y1, color, emit){
+  context.beginPath();
+  context.moveTo(x0, y0);
+  context.lineTo(x1, y1);
+  context.strokeStyle = color;
+  context.lineWidth = 5;
+  context.stroke();
+  context.closePath();
+
+  if (!emit) { return; }
+  var w = canvas.width;
+  var h = canvas.height;
+
+}
+
+function onMouseDown(e){
+  drawing = true;
+  current.x = e.clientX||e.touches[0].clientX;
+  current.y = e.clientY||e.touches[0].clientY;
+}
+
+function onMouseUp(e){
+  if (!drawing) { return; }
+  drawing = false;
+  drawLine(current.x, current.y, e.clientX||e.touches[0].clientX, e.clientY||e.touches[0].clientY, current.color, true);
+}
+
+function onMouseMove(e){
+  if (!drawing) { return; }
+  drawLine(current.x, current.y, e.clientX||e.touches[0].clientX, e.clientY||e.touches[0].clientY, current.color, true);
+  current.x = e.clientX||e.touches[0].clientX;
+  current.y = e.clientY||e.touches[0].clientY;
+}
+
+function onColorUpdate(e){
+  current.color = e.target.className.split(' ')[1];
+}
+
+// limit the number of events per second
+function throttle(callback, delay) {
+  var previousCall = new Date().getTime();
+  return function() {
+    var time = new Date().getTime();
+
+    if ((time - previousCall) >= delay) {
+      previousCall = time;
+      callback.apply(null, arguments);
+    }
+  };
+}
+
+// make the canvas fill its parent
+function onResize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+});
+
+</script>
+
+</body>
+</html>   
